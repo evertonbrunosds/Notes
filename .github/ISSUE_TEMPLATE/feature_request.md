@@ -1,20 +1,17 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
+name: Nova Issue
+about: Use este tema para descrever uma nova issue
 title: ''
 labels: ''
 assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+## MOTIVAÇÃO INICIAL
+<!-- Descreva a motivação inicial para esta issue. Por que essa mudança ou adição é necessária? Quais problemas ela resolve ou quais melhorias ela traz? -->
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+## RESULTADO ESPERADO
+<!-- Detalhe o que é esperado como resultado final. Quais são os critérios de aceitação? Como saberemos que a issue foi resolvida com sucesso? -->
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
-
-**Additional context**
-Add any other context or screenshots about the feature request here.
+## TESTAGEM ESPERADA
+<!-- Explique como a testagem será conduzida. Quais são os passos necessários para garantir que o resultado esperado foi alcançado? Inclua qualquer informação relevante sobre ambiente de teste, ferramentas necessárias, etc. -->
