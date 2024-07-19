@@ -8,6 +8,7 @@ from psycopg2.errors import (
     UniqueViolation,
 )
 
+
 # SETTING
 
 
@@ -661,6 +662,7 @@ def test_insert_check_value_in_user_name_column(cursor: Cursor) -> None:
         and '"user_profile"' in message
     )
 
+
 def test_insert_check_value_in_display_name_column(cursor: Cursor) -> None:
     exception, message = insert_user_profile(
         cursor,
@@ -698,7 +700,6 @@ def test_insert_check_value_in_display_name_column(cursor: Cursor) -> None:
         and '"user_profile_display_name_check"' in message
         and '"user_profile"' in message
     )
-
 
 
 def test_insert_check_value_in_birthday_column(cursor: Cursor) -> None:
