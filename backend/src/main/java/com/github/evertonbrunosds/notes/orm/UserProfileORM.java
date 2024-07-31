@@ -6,7 +6,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.github.evertonbrunosds.notes.component.SymmetricSecureComponent;
+import com.github.evertonbrunosds.notes.dto.UserProfileDTO;
+
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,6 +35,7 @@ public class UserProfileORM {
     @Column(name = "user_name", length = 32, nullable = false, unique = true)
     private String userName;
 
+    @Convert(converter = SymmetricSecureComponent.class)
     @Column(name = "email", length = 256, nullable = false, unique = true)
     private String email;
 
@@ -52,6 +57,29 @@ public class UserProfileORM {
 
     public UserProfileORM() {
         createdAt = currentLocalDateTime();
+    }
+
+    public UserProfileDTO toDTO() {
+        final var dto = new UserProfileDTO();
+        dto.setId(id);
+        dto.setUserName(userName);
+        dto.setEmail(email);
+        dto.setDisplayName(displayName);
+        dto.setDescription(description);
+        dto.setBirthday(birthday);
+        dto.setPassword(password);
+        dto.setCreatedAt(createdAt);
+        return dto;
+    }
+
+    public void load(final UserProfileDTO orm) {
+        this.id = orm.getId();
+        this.userName = orm.getUserName();
+        this.email = orm.getEmail();
+        this.displayName = orm.getDisplayName();
+        this.description = orm.getDescription();
+        this.birthday = orm.getBirthday();
+        this.password = orm.getPassword();
     }
 
 }

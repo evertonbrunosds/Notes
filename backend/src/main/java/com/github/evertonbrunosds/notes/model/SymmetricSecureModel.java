@@ -13,10 +13,12 @@ import org.springframework.lang.NonNull;
 
 import com.github.evertonbrunosds.notes.util.ResourceException;
 
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
+@Builder
 @RequiredArgsConstructor
-public class SymmetricSecureProcessor {
+public class SymmetricSecureModel {
 
     @NonNull
     private final String algorithm;
@@ -44,20 +46,19 @@ public class SymmetricSecureProcessor {
     }
 
     private String internalDecode(final String target) throws Throwable {
-        final SecretKeySpec keySpec = new SecretKeySpec(key, algorithm);
-        final Cipher cipher = Cipher.getInstance(transformation);
+        final var keySpec = new SecretKeySpec(key, algorithm);
+        final var cipher = Cipher.getInstance(transformation);
         cipher.init(Cipher.DECRYPT_MODE, keySpec);
-        final byte[] decodedBytes = Base64.getDecoder().decode(target);
-        final byte[] decryptedBytes = cipher.doFinal(decodedBytes);
-        return new String(decryptedBytes, StandardCharsets.UTF_8);
+        final var decodedBytes = cipher.doFinal(Base64.getDecoder().decode(target));
+        return new String(decodedBytes, StandardCharsets.UTF_8);
     }
 
     private String internalEncode(final String target) throws Throwable {
-        final SecretKeySpec keySpec = new SecretKeySpec(key, algorithm);
-        final Cipher cipher = Cipher.getInstance(transformation);
+        final var keySpec = new SecretKeySpec(key, algorithm);
+        final var cipher = Cipher.getInstance(transformation);
         cipher.init(Cipher.ENCRYPT_MODE, keySpec);
-        final byte[] encryptedBytes = cipher.doFinal(target.getBytes(StandardCharsets.UTF_8));
-        return Base64.getEncoder().encodeToString(encryptedBytes);
+        final var encodedBytes = cipher.doFinal(target.getBytes(StandardCharsets.UTF_8));
+        return Base64.getEncoder().encodeToString(encodedBytes);
     }
 
 }

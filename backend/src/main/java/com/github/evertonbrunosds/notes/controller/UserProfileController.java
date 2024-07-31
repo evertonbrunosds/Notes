@@ -16,12 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.evertonbrunosds.notes.component.ConverterComponent;
-import com.github.evertonbrunosds.notes.component.UpdaterComponent;
-import com.github.evertonbrunosds.notes.configuration.AESProcessorConfiguration.AESProcessor;
 import com.github.evertonbrunosds.notes.constraint.annotation.Email;
 import com.github.evertonbrunosds.notes.constraint.annotation.UserName;
 import com.github.evertonbrunosds.notes.dto.UserProfileDTO;
+import com.github.evertonbrunosds.notes.orm.UserProfileORM;
 import com.github.evertonbrunosds.notes.service.UserProfileService;
 import com.github.evertonbrunosds.notes.util.Pagination;
 
@@ -37,29 +35,23 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping(value = UserProfileDTO.ENDPOINT)
 public class UserProfileController {
 
-    private final ConverterComponent converter;
-
     private final UserProfileService service;
-
-    private final UpdaterComponent updater;
-
-    private final AESProcessor aes;
 
     @PostMapping
     public ResponseEntity<UserProfileDTO> create(@Valid @RequestBody final UserProfileDTO dto) {
-        return ResponseEntity.ok(converter.toDTO(service.save(converter.toORM(dto))));
+        return ResponseEntity.ok(service.save(dto.toORM()).toDTO());
     }
 
     @PutMapping("/id={id}")
     public ResponseEntity<UserProfileDTO> update(@Valid @RequestBody final UserProfileDTO dto, @PathVariable final UUID id) {
         final var optional = service.findById(id);
         optional.ifPresent(orm -> {
-            updater.inORM(orm).accept(dto);
+            orm.load(dto);
             service.save(orm);
         });
         return ResponseEntity.of(optional
                 .stream()
-                .map(converter::toDTO)
+                .map(UserProfileORM::toDTO)
                 .findAny());
     }
 
@@ -68,16 +60,16 @@ public class UserProfileController {
         return ResponseEntity.of(service
                 .findById(id)
                 .stream()
-                .map(converter::toDTO)
+                .map(UserProfileORM::toDTO)
                 .findAny());
     }
 
     @GetMapping("/email={email}")
     public ResponseEntity<UserProfileDTO> readByEmail(@PathVariable @Email final String email) {
         return ResponseEntity.of(service
-                .findByEmail(aes.encode(email))
+                .findByEmail(email)
                 .stream()
-                .map(converter::toDTO)
+                .map(UserProfileORM::toDTO)
                 .findAny());
     }
 
@@ -87,7 +79,7 @@ public class UserProfileController {
         final var details = Pagination.in(request);
         final var ormPage = service.findByUserNameContaining(userName, details.currentPage(), details.sizePage());
         Pagination.in(response).accept(ormPage);
-        return ResponseEntity.ok(ormPage.getContent().stream().map(converter::toDTO).collect(Collectors.toList()));
+        return ResponseEntity.ok(ormPage.getContent().stream().map(UserProfileORM::toDTO).collect(Collectors.toList()));
     }
 
     @DeleteMapping("/id={id}")
