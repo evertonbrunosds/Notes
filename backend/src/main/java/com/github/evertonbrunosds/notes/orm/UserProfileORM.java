@@ -6,11 +6,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import com.github.evertonbrunosds.notes.component.SymmetricSecureComponent;
+import org.hibernate.annotations.ColumnTransformer;
+
 import com.github.evertonbrunosds.notes.dto.UserProfileDTO;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,6 +26,8 @@ import lombok.Setter;
 @Table(name = "user_profile")
 public class UserProfileORM {
 
+    private static final String KEY = "Xd4oEGeTkRgYaXHfeEsh8AXuf3OIkEUo";
+
     @Setter(value = AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +37,10 @@ public class UserProfileORM {
     @Column(name = "user_name", length = 32, nullable = false, unique = true)
     private String userName;
 
-    @Convert(converter = SymmetricSecureComponent.class)
+    @ColumnTransformer(
+        read = "pgp_sym_decrypt(email::bytea, '" + KEY + "')",
+        write = "pgp_sym_encrypt(?, '" + KEY + "')"
+    )
     @Column(name = "email", length = 256, nullable = false, unique = true)
     private String email;
 

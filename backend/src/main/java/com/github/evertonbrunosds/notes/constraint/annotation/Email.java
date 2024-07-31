@@ -12,7 +12,7 @@ import jakarta.validation.Payload;
 import jakarta.validation.constraints.NotBlank;
 
 @NotBlank
-@Length(max = 256, message = "The length must be less than or equal to 256")
+@Length(max = 64, message = "The length must be less than or equal to 64")
 @jakarta.validation.constraints.Email(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
 @Constraint(validatedBy = {})
 @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE })

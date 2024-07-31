@@ -109,7 +109,7 @@ def test_email_column_structure(cursor: Cursor) -> None:
         expected_table_name="user_profile",
         expected_column_name="email",
         expected_data_type="character varying",
-        expected_character_maximum_length=256,
+        expected_character_maximum_length=262,
         expected_column_default=None,
         expected_is_nullable=False,
         expected_constraints={ConstraintType.UNIQUE: None},
@@ -362,10 +362,10 @@ def test_insert_hyper_length_value_in_user_name_column(cursor: Cursor) -> None:
 
 
 def test_insert_hyper_length_value_in_email_column(cursor: Cursor) -> None:
-    exception, message = insert_user_profile(cursor, email="e" * 257)
+    exception, message = insert_user_profile(cursor, email="e" * 263)
     assert (
         isinstance(exception, StringDataRightTruncation)
-        and "character varying(256)" in message
+        and "character varying(262)" in message
     ), message
 
 

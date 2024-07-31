@@ -1,3 +1,0 @@
-aes.transformation=AES/ECB/PKCS5Padding
-
-aes.key=32_caracteres

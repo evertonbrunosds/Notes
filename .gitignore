@@ -2,5 +2,3 @@
 .pytest_cache
 __pycache__
 database/assembled.sql
-symmetric-secure-processor.properties
-application.properties
