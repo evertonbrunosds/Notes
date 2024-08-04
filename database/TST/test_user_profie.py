@@ -109,7 +109,7 @@ def test_email_column_structure(cursor: Cursor) -> None:
         expected_table_name="user_profile",
         expected_column_name="email",
         expected_data_type="character varying",
-        expected_character_maximum_length=256,
+        expected_character_maximum_length=262,
         expected_column_default=None,
         expected_is_nullable=False,
         expected_constraints={ConstraintType.UNIQUE: None},
@@ -127,7 +127,7 @@ def test_display_name_column_structure(cursor: Cursor) -> None:
         expected_column_default=None,
         expected_is_nullable=False,
         expected_constraints={
-            ConstraintType.CHECK: "(((display_name)::text ~ '^(?! )(?!.*  )[a-zA-Z0-9 ]+(?<! )$'::text))"
+            ConstraintType.CHECK: "(((display_name)::text ~ '^(?! )(?!.*  )[a-zA-Z0-9À-ÿ ]+(?<! )$'::text))"
         },
         expected_is_index=False,
         cursor=cursor,
@@ -138,8 +138,8 @@ def test_description_column_structure(cursor: Cursor) -> None:
     verify_structure(
         expected_table_name="user_profile",
         expected_column_name="description",
-        expected_data_type="text",
-        expected_character_maximum_length=None,
+        expected_data_type="character varying",
+        expected_character_maximum_length=1024,
         expected_column_default=None,
         expected_is_nullable=True,
         expected_constraints=None,
@@ -362,10 +362,10 @@ def test_insert_hyper_length_value_in_user_name_column(cursor: Cursor) -> None:
 
 
 def test_insert_hyper_length_value_in_email_column(cursor: Cursor) -> None:
-    exception, message = insert_user_profile(cursor, email="e" * 257)
+    exception, message = insert_user_profile(cursor, email="e" * 263)
     assert (
         isinstance(exception, StringDataRightTruncation)
-        and "character varying(256)" in message
+        and "character varying(262)" in message
     ), message
 
 
@@ -374,6 +374,13 @@ def test_insert_hyper_length_value_in_display_name_column(cursor: Cursor) -> Non
     assert (
         isinstance(exception, StringDataRightTruncation)
         and "character varying(32)" in message
+    ), message
+
+def test_insert_hyper_length_value_in_description_column(cursor: Cursor) -> None:
+    exception, message = insert_user_profile(cursor, description="e" * 1025)
+    assert (
+        isinstance(exception, StringDataRightTruncation)
+        and "character varying(1024)" in message
     ), message
 
 
@@ -661,6 +668,15 @@ def test_insert_check_value_in_user_name_column(cursor: Cursor) -> None:
         and '"user_profile_user_name_check"' in message
         and '"user_profile"' in message
     )
+    exception, message = insert_user_profile(
+        cursor,
+        user_name="napoleão",
+    )
+    assert (
+        isinstance(exception, CheckViolation)
+        and '"user_profile_user_name_check"' in message
+        and '"user_profile"' in message
+    )
 
 
 def test_insert_check_value_in_display_name_column(cursor: Cursor) -> None:
@@ -700,6 +716,11 @@ def test_insert_check_value_in_display_name_column(cursor: Cursor) -> None:
         and '"user_profile_display_name_check"' in message
         and '"user_profile"' in message
     )
+    exception, message = insert_user_profile(
+        cursor,
+        display_name="Napoleão Bona Parte",
+    )
+    assert exception is None and message == "", message
 
 
 def test_insert_check_value_in_birthday_column(cursor: Cursor) -> None:
